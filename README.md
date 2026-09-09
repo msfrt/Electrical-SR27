@@ -1,4 +1,4 @@
-# SR22 Electronics
+# SR27 Electronics
 
 *Welcome to e-tron. We think you'll like it here.*
 
