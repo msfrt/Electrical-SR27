@@ -24,7 +24,7 @@ event. We made a change to the code in order to test something and now the modul
 malfunctioning. We need to know exactly where the reliable code is and how to access it quickly, which is what the
 master branch is for. The branch itself is easy to find, as its name is `master`.
 
-A code becomes verified once it has been tested in an operational environment and approved by either Bharatraj or Carter. This could be as simple as making sure that the ATCC can send CAN messages, or, as complex as verifying that the
+A code becomes verified once it has been tested in an operational environment and approved by either Bharatraj, Carter, or Caleb. This could be as simple as making sure that the ATCC can send CAN messages, or, as complex as verifying that the
 PDM has acceptable fan and water pump control at low battery voltages and high inverter temperatures.
 
 ## File Structure
