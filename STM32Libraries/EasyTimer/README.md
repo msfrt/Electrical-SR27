@@ -63,7 +63,7 @@ C'mon, we all love a blinking LED. Making a blinking LED is super simple, here's
 
 #### Step 1: define your LED object
 ```cpp
-LEDBlink my_led(int stm32_pin, int frequency);
+LEDBlink my_led(GPIO_TypeDef* GPIO_port, int stm32_pin, int frequency);
 ```
 
 #### Step 2: Use your LED object!
