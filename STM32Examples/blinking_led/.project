@@ -30,4 +30,11 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 		<nature>org.eclipse.cdt.core.ccnature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>EasyTimer</name>
+			<type>2</type>
+			<location>/Users/bharatelav/Documents/Formula/Software/Electrical-SR27/STM32Libraries/EasyTimer</location>
+		</link>
+	</linkedResources>
 </projectDescription>
