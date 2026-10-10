@@ -54,7 +54,8 @@ public:
 class ADCChip {
 
 private:
-  int chip_select_;
+  uint16_t chip_select_pin_; // specific width because hardware specific
+  GPIO_TypeDef* chip_select_port_； // specific type for GPIO port
 
 
 public:
