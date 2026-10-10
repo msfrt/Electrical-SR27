@@ -1,7 +1,7 @@
 // Written by Bharatraj Elavarasan, 2026 (Original Written by Dave Yonkers,
 // 2020)
 #pragma once
-#include "main.h"
+#include "stm32g4xx_hal.h"
 
 // timers! Beware, this class does not check for garbage values
 // such as frequency = 0, or a negative frequency, or a frequency faster than

@@ -1,5 +1,7 @@
-#ifndef READADC_H
-#define READADC_H
+// Written by Bharatraj Elavarasan, 2026 (Original Written by Dave Yonkers,
+// 2020)
+#pragma once
+#include "stm32g4xx_hal.h"
 
 /**
  * ADCSensor
@@ -72,7 +74,7 @@ public:
   ADCChip() = delete;
 
   // constructor
-  ADCChip(SPI_HandleTypeDef* spi, GPIO_TypeDef* chip_select_port, uint16_t chip_select_pin) : spi_(spi), chip_select_port_(cs_port), chip_select_pin_(cs_pin) {}
+  ADCChip(SPI_HandleTypeDef* spi, GPIO_TypeDef* chip_select_port, uint16_t chip_select_pin) : spi_(spi), chip_select_port_(chip_select_port), chip_select_pin_(chip_select_pin) {}
 
   // member-functions
   void begin(); // used to intilize the pin
@@ -90,6 +92,3 @@ public:
   void sample(ADCSensor &sensor0, ADCSensor &sensor1, ADCSensor &sensor2, ADCSensor &sensor3, ADCSensor &sensor4, ADCSensor &sensor5, ADCSensor &sensor6, ADCSensor &sensor7);
 
 };
-
-
-#endif
