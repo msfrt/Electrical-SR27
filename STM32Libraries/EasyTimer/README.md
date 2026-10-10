@@ -1,5 +1,10 @@
 # EasyTimer Library
 
+### State of Library
+Tested basic functionality of timer frequency via BlinkingLED, more tests with actual hardware needs to be done.
+
+### EasyTimer Librarys
+
 EasyTimer is a library for creating frequency-based timers that avoid the STM32 `HAL_Delay()` function. `HAL_Delay()` temporarily halts all code execution for a specified duration of milliseconds.
 
 To get around the halting, non-destructive timers were previously created like this:
