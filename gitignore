@@ -1,0 +1,48 @@
+# ---- VSCode ----
+.vscode/
+*.code-workspace
+
+# ---- macOS ----
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# ---- STM32CubeIDE / Eclipse ----
+.metadata/
+.settings/
+.cproject
+.project
+Debug/
+Release/
+RTE/
+*.launch
+*.list
+*.map
+*.elf
+*.bin
+*.hex
+*.o
+*.d
+*.su
+*.cyclo
+*.d.bak
+
+# CubeMX backup files
+*.ioc.bak
+
+# ---- Build artifacts ----
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+
+# ---- STM32CubeIDE workspace-level junk (if repo sits inside a CubeIDE workspace) ----
+*.wsp
+
+# ---- Toolchain-generated / temp files ----
+*.log
+*.tmp
+*~
