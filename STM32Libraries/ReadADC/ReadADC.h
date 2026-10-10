@@ -1,5 +1,15 @@
-#ifndef READADC_H
-#define READADC_H
+// Written by Bharatraj Elavarasan, 2026 (Original Written by Dave Yonkers,
+// 2020)
+#pragma once
+#include "stm32g4xx_hal.h"
+
+/**
+ * ADCSensor
+ *
+ * Not thread-safe. Call all methods from a single context (one task, or the
+ * main loop). If an ISR or another task needs the data, the application is
+ * responsible for synchronization (queue, mutex, etc.).
+ */
 
 class ADCSensor{
 
@@ -50,12 +60,20 @@ public:
   
 };
 
+/**
+ * ADCChip
+ *
+ * Not thread-safe. Owns SPI transactions on the bus it is given; only one
+ * task should call sample(), or the application must wrap calls in a mutex
+ * (also if other devices share the same SPI bus).
+ */
 
 class ADCChip {
 
 private:
-  int chip_select_;
-
+  SPI_HandleTypeDef* spi_; // spi param
+  GPIO_TypeDef* chip_select_port_; // specific type for GPIO port
+  uint16_t chip_select_pin_; // specific width because hardware specific
 
 public:
 
@@ -63,10 +81,10 @@ public:
   ADCChip() = delete;
 
   // constructor
-  ADCChip(int chip_select) : chip_select_(chip_select) {}
+  ADCChip(SPI_HandleTypeDef* spi, GPIO_TypeDef* chip_select_port, uint16_t chip_select_pin) : spi_(spi), chip_select_port_(chip_select_port), chip_select_pin_(chip_select_pin) {}
 
   // member-functions
-  void begin(); // used to intilize the pin
+  void begin(); // used to initialize the pin
 
   // sample a single sensor
   void sample(ADCSensor &sensor0);
@@ -81,6 +99,3 @@ public:
   void sample(ADCSensor &sensor0, ADCSensor &sensor1, ADCSensor &sensor2, ADCSensor &sensor3, ADCSensor &sensor4, ADCSensor &sensor5, ADCSensor &sensor6, ADCSensor &sensor7);
 
 };
-
-
-#endif
