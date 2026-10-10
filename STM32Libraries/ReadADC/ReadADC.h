@@ -60,6 +60,13 @@ public:
   
 };
 
+/**
+ * ADCChip
+ *
+ * Not thread-safe. Owns SPI transactions on the bus it is given; only one
+ * task should call sample(), or the application must wrap calls in a mutex
+ * (also if other devices share the same SPI bus).
+ */
 
 class ADCChip {
 
@@ -77,7 +84,7 @@ public:
   ADCChip(SPI_HandleTypeDef* spi, GPIO_TypeDef* chip_select_port, uint16_t chip_select_pin) : spi_(spi), chip_select_port_(chip_select_port), chip_select_pin_(chip_select_pin) {}
 
   // member-functions
-  void begin(); // used to intilize the pin
+  void begin(); // used to initialize the pin
 
   // sample a single sensor
   void sample(ADCSensor &sensor0);
