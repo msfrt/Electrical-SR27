@@ -62,9 +62,9 @@ public:
 class ADCChip {
 
 private:
+  SPI_HandleTypeDef* spi_; // spi param
+  GPIO_TypeDef* chip_select_port_; // specific type for GPIO port
   uint16_t chip_select_pin_; // specific width because hardware specific
-  GPIO_TypeDef* chip_select_port_； // specific type for GPIO port
-
 
 public:
 
@@ -72,7 +72,7 @@ public:
   ADCChip() = delete;
 
   // constructor
-  ADCChip(int chip_select) : chip_select_(chip_select) {}
+  ADCChip(SPI_HandleTypeDef* spi, GPIO_TypeDef* chip_select_port, uint16_t chip_select_pin) : spi_(spi), chip_select_port_(cs_port), chip_select_pin_(cs_pin) {}
 
   // member-functions
   void begin(); // used to intilize the pin
