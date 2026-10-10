@@ -1,6 +1,14 @@
 #ifndef READADC_H
 #define READADC_H
 
+/**
+ * ADCSensor
+ *
+ * Not thread-safe. Call all methods from a single context (one task, or the
+ * main loop). If an ISR or another task needs the data, the application is
+ * responsible for synchronization (queue, mutex, etc.).
+ */
+
 class ADCSensor{
 
 private:
