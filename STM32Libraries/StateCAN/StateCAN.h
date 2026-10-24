@@ -1,7 +1,7 @@
 #ifndef STATE_CAN_H
 #define STATE_CAN_H
 
-#include <FlexCAN_T4.h> // this gives the error.
+#include "stm32g4xx_hal.h"
 
 class StateCounter{
   private:

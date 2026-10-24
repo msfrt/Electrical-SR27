@@ -1,4 +1,3 @@
-#include "Arduino.h"
 #include "BoardTemp.h"
 
 // must call in setup();
