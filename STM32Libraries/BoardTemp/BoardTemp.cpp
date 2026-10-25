@@ -3,7 +3,7 @@
 // must call in setup();
 void BoardTempDiode::begin(){
   this->max_read_val_ = pow(2, this->read_bits_) - 1; // max value that analogRead can return
-  pinMode(this->pin_, INPUT); // initialize pin
+  gpioInit(port_, pin_, GPIO_MODE_INPUT) // initialize pin
 }
 
 void BoardTempDiode::sample(){

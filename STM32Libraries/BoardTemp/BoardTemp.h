@@ -3,7 +3,7 @@
 
 // board temp is kinda a little muffed up, so here's a class to sample it and what not.
 // it's not like a normal sensor, but this class makes it act like one.
-
+#include "GpioUtil.h"
 
 class BoardTempDiode{
   
@@ -11,7 +11,7 @@ class BoardTempDiode{
     // constructors
     BoardTempDiode() = delete;
     BoardTempDiode(GPIO_TypeDef* port, uint16_t pin, int read_bits, float temp_cal, float mv_cal) :
-              pin_(pin), read_bits_(read_bits), t_cal_(temp_cal), mv_cal_(mv_cal) {};
+              port_(port), pin_(pin), read_bits_(read_bits), t_cal_(temp_cal), mv_cal_(mv_cal) {};
 
     
     void begin(); // Initialize the board temp pin and set max values
@@ -25,8 +25,8 @@ class BoardTempDiode{
   
   private:
   
-    GPIO_TypeDef* led_port_;
-    uint16_t led_pin_;
+    GPIO_TypeDef* port_;
+    uint16_t pin_;
     int read_bits_;
     float max_read_val_;
 
