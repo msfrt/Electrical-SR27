@@ -28,7 +28,7 @@ class StateSignal{
     float value_ = 0.00; // the actual, real value of the signal
     bool signed_ = true;
     const int inverse_factor_ = 1; // if the factor is 0.1 in the DBC, it should be 10 here. 0.01 -> 100
-    const int offset_ = 0; // offset as in DBC
+    const int offset_ = 0; // offset as in DBC (currently not enabled)
     int lower_bound_ = 0; // for bounds check
     int upper_bound_ = 0; // for bounds check
     bool valid_ = true; // if the signal is considered valid
