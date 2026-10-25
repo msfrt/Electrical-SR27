@@ -66,17 +66,27 @@ void ADCSensor::calculate(){
   // calculate the average values
   float sensor_read_avg = static_cast<float>(this->running_read_total_) / this->running_read_count_;
   mV = (sensor_read_avg / 4095.0f) * 5000.0f; // read 0 = 0V, 4095 = 5V. 5000mV = 5V.
-  this->actual_avg_ = (mV - this->zero_mV_) / this->mV_per_sensor_unit_; // calculates the sensor value
 
   // set the last calculated mv average to the mv getter variable
   this->read_mvoltage_ = mV;
 
+  // ADDED, MAKE mV CONSISTENT WITH zero_mV_ AND mV_per_sensor_unit_
+  mV = mV * 10;
+  // ADDED, MAKE mV CONSISTENT WITH zero_mV_ AND mV_per_sensor_unit_
+  this->actual_avg_ = (mV - this->zero_mV_) / this->mV_per_sensor_unit_; // calculates the sensor value
+
   // calculate the min values
   mV = (static_cast<float>(this->read_min_) / 4095.0f) * 5000.0f;
+  // ADDED, MAKE mV CONSISTENT WITH zero_mV_ AND mV_per_sensor_unit_
+  mV = mV * 10;
+  // ADDED, MAKE mV CONSISTENT WITH zero_mV_ AND mV_per_sensor_unit_
   this->actual_min_ = (mV - this->zero_mV_) / this->mV_per_sensor_unit_;
 
   // calculate the max values
   mV = (static_cast<float>(this->read_max_) / 4095.0f) * 5000.0f;
+  // ADDED, MAKE mV CONSISTENT WITH zero_mV_ AND mV_per_sensor_unit_
+  mV = mV * 10;
+  // ADDED, MAKE mV CONSISTENT WITH zero_mV_ AND mV_per_sensor_unit_
   this->actual_max_ = (mV - this->zero_mV_) / this->mV_per_sensor_unit_;
 
   this->reset();
