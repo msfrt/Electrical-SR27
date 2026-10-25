@@ -29,8 +29,8 @@ class StateSignal{
     bool signed_ = true;
     const int inverse_factor_ = 1; // if the factor is 0.1 in the DBC, it should be 10 here. 0.01 -> 100
     const int offset_ = 0; // offset as in DBC (currently not enabled)
-    int lower_bound_ = 0; // for bounds check
-    int upper_bound_ = 0; // for bounds check
+    int lower_bound_ = 0; // for bounds check (currently not enabled)
+    int upper_bound_ = 0; // for bounds check (currently not enabled)
     bool valid_ = true; // if the signal is considered valid
     float secondary_value_ = 0.00; // secondary_value_ replaces value_ when this signal is not considered valid
     int timeout_delay_ = -1; // milliseconds delay before signal should become invalid. -1 means disabled
