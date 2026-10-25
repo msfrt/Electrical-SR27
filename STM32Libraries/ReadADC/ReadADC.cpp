@@ -1,4 +1,5 @@
 #include "ReadADC.h"
+#include "GpioUtil.h"
 
 // constructor
 // param channel - The channel of the ADC that this sensor is on
@@ -25,13 +26,7 @@ ADCSensor::ADCSensor(unsigned int channel, int zero_mV, int mV_per_sensor_unit){
 
 void ADCChip::begin(){
   // set the chip select pin as an output:
-  GPIO_InitTypeDef GPIO_InitStruct = {0}; // zero-initialize all fields first
-  GPIO_InitStruct.Pin = this->chip_select_pin_;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-
-  HAL_GPIO_Init(chip_select_port_, &GPIO_InitStruct);
+  gpioInit(chip_select_port_, chip_select_pin_, GPIO_MODE_OUTPUT_PP,)
 
   // set the chip select pin high
   HAL_GPIO_WritePin(chip_select_port_, chip_select_pin_, GPIO_PIN_SET);
