@@ -6,7 +6,7 @@ An easy and low-cost way to measure Centigrade temperature with a diode. This su
 
 Constructor:
 ```cpp
-BoardTempDiode(int pin, int read_resolution, float temp_cal, float mV_cal)
+BoardTempDiode(GPIO_TypeDef* port, uint16_t pin, int read_resolution, float temp_cal, float mV_cal)
 ```
 * `pin` - the microcontroller pin that the voltage reading will be sampled from
 * `read_resolution` - the number of bits of resolution that your microcontroller is sampling. 10 is the default on most μCs. The teensy 4.0 can go up to 12 (or so I've read). This parameter doesn't actually change the read resolution of your board. To do that, you must call `analogReadResolution(num_bits)`.

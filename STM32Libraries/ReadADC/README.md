@@ -60,12 +60,6 @@ EasyTimer sample_timer(100); // 50hz timer from the EasyTimer library
 EasyTimer print_timer(2); // 2Hz timer from the EasyTimer library
 
 void setup(){
-  // initialize serial communication for debugging purposes
-  Serial.begin(112500);
-
-  // initialize SPI:
-  SPI.begin();
-
   // initialize chip
   my_chip.begin();
 }
