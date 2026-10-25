@@ -1,6 +1,7 @@
 // Written by Bharatraj Elavarasan, 2026 (Original Written by Dave Yonkers,
 // 2020)
 #include "EasyTimer.h"
+#include "GpioUtil.h"
 
 // creates a timer with the desired frequency.
 EasyTimer::EasyTimer(int freq) {
@@ -54,13 +55,8 @@ LEDBlink::LEDBlink(GPIO_TypeDef* port, uint16_t pin, int freq) {
   last_time_ = HAL_GetTick();
   led_on_ = false;
 
-  GPIO_InitTypeDef GPIO_InitStruct = {0};  // zero-initialize all fields first
-  GPIO_InitStruct.Pin = led_pin_;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-
-  HAL_GPIO_Init(led_port_, &GPIO_InitStruct);  // initialize the pin
+  gpioInit(led_port_, led_pin_, GPIO_MODE_OUTPUT_PP);  // initialize the pin
+  
 }
 
 // update the frequency of LED blinking
