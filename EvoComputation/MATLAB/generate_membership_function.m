@@ -1,21 +1,21 @@
 function membership_function_string = generate_membership_function()
 % GENERATE_MEMBERSHIP_FUNCTION  Build one random MF slot as a bit row vector.
 %
-% Layout (param index k, 0-based, each param is precision_bits long):
-%   Difference of Sigmoids (a1 c1 a2 c2)          k = 0-3
+% Layout (param index k, 0-based, each param is precision_bits long, Gray coded):
+%   Difference of Sigmoids (a1 c1 a2 c2)          k = 0-3    sorted (a1 c1)(a2 c2) pairs, c1 <= c2
 %   Gaussian (sigma c)                            k = 4-5
 %   Generalized Bell (a b c)                      k = 6-8
-%   Linear S Shaped (a b)                         k = 9-10
-%   Linear Z Shaped (a b)                         k = 11-12
-%   Pi Shaped (a b c d)                           k = 13-16
-%   Product of Sigmoids (a1 c1 a2 c2)             k = 17-20
-%   S Shaped (a b)                                k = 21-22
+%   Linear S Shaped (a b)                         k = 9-10   sorted a <= b
+%   Linear Z Shaped (a b)                         k = 11-12  sorted a <= b
+%   Pi Shaped (a b c d)                           k = 13-16  sorted a <= b <= c <= d
+%   Product of Sigmoids (a1 c1 a2 c2)             k = 17-20  sorted (a1 c1)(a2 c2) pairs, c1 <= c2
+%   S Shaped (a b)                                k = 21-22  sorted a <= b
 %   Sigmoid (a c)                                 k = 23-24
-%   Trapezoidal (a b c d)                         k = 25-28  (sorted a<=b<=c<=d)
-%   Triangular (a b c)                            k = 29-31  (sorted a<=b<=c)
-%   Two Sided Gaussian (sigma1 c1 sigma2 c2)      k = 32-35
-%   Z Shaped (a b)                                k = 36-37
-%   Select bits (4 bits, picks 1 of 13 shapes)    after k = 37
+%   Trapezoidal (a b c d)                         k = 25-28  sorted a <= b <= c <= d
+%   Triangular (a b c)                            k = 29-31  sorted a <= b <= c
+%   Two Sided Gaussian (sigma1 c1 sigma2 c2)      k = 32-35  sorted (sigma1 c1)(sigma2 c2) pairs, c1 <= c2
+%   Z Shaped (a b)                                k = 36-37  sorted a <= b
+%   Select bits (4 bits, plain binary, 0-12)      after k = 37
 %
 % Total length = 38*precision_bits + 4
 
@@ -77,31 +77,40 @@ function bit_list = add_param_bits(bit_list, n)
     bit_list = [bit_list, randi([0 1], 1, n)];
 end
 
-function value = bits_to_int(bit_list, offset, n)
-    % decode n bits starting at offset (1-based), MSB first
+function value = bits_to_int_gray(bit_list, offset, n)
+    % gray bits -> integer (MSB first), reads n bits starting at offset (1-based)
     value = 0;
+    binary_bit = 0;
     for j = 0:n-1
-        value = value + bit_list(offset + j) * 2^(n - 1 - j);
+        binary_bit = xor(binary_bit, bit_list(offset + j));
+        value = value + binary_bit * 2^(n - 1 - j);
     end
 end
 
-function bit_list = sort_params(bit_list, start, n, num_params)
-    % sort num_params consecutive params (starting at bit index start) by
-    % decoded value, smallest first, and write the sorted bits back
-    ints   = zeros(1, num_params);
-    chunks = zeros(num_params, n);
-    for p = 1:num_params
-        offset = start + (p-1)*n;
-        ints(p)     = bits_to_int(bit_list, offset, n);
-        chunks(p,:) = bit_list(offset : offset + n - 1);
+function bit_list = sort_params(bit_list, start, n, num_params, group_size, key_index)
+    % sort num_params consecutive params (starting at bit index start, 1-based) smallest -> largest
+    % if group size = 1, each param gets a key = its decoded value, params sorted by that
+    % if group size = 2+, each group gets a key = decoded value of one param in the group,
+    %   key index (0-based) says which param in the group that is
+    if nargin < 5, group_size = 1; end
+    if nargin < 6, key_index = 0; end
+    assert(num_params >= 2 && num_params <= 4);
+
+    size_bits = group_size * n;
+    keys   = zeros(1, num_params);
+    chunks = zeros(num_params, size_bits);
+    for g = 1:num_params
+        offset = start + (g-1)*size_bits;
+        keys(g)     = bits_to_int_gray(bit_list, offset + key_index*n, n);
+        chunks(g,:) = bit_list(offset : offset + size_bits - 1);
     end
 
-    [~, idx] = sort(ints);
+    [~, idx] = sort(keys);
     chunks = chunks(idx, :);
 
-    for p = 1:num_params
-        offset = start + (p-1)*n;
-        bit_list(offset : offset + n - 1) = chunks(p, :);
+    for g = 1:num_params
+        offset = start + (g-1)*size_bits;
+        bit_list(offset : offset + size_bits - 1) = chunks(g, :);
     end
 end
 
@@ -109,10 +118,12 @@ end
 %% ---------- shape generators ----------
 
 function bit_list = generate_diff_of_sigmoids(bit_list, n)
+    start = numel(bit_list) + 1;              % bit index where diff of sigmoids begins (1-based)
     bit_list = add_param_bits(bit_list, n);   % a1
     bit_list = add_param_bits(bit_list, n);   % c1
     bit_list = add_param_bits(bit_list, n);   % a2
     bit_list = add_param_bits(bit_list, n);   % c2
+    bit_list = sort_params(bit_list, start, n, 2, 2, 1);   % sort (a1 c1)(a2 c2) pairs so c1 <= c2
 end
 
 function bit_list = generate_gaussian(bit_list, n)
@@ -127,32 +138,42 @@ function bit_list = generate_generalized_bell(bit_list, n)
 end
 
 function bit_list = generate_linear_s_shaped(bit_list, n)
+    start = numel(bit_list) + 1;              % bit index where linear s shaped begins (1-based)
     bit_list = add_param_bits(bit_list, n);   % a
     bit_list = add_param_bits(bit_list, n);   % b
+    bit_list = sort_params(bit_list, start, n, 2);   % sort a <= b
 end
 
 function bit_list = generate_linear_z_shaped(bit_list, n)
+    start = numel(bit_list) + 1;              % bit index where linear z shaped begins (1-based)
     bit_list = add_param_bits(bit_list, n);   % a
     bit_list = add_param_bits(bit_list, n);   % b
+    bit_list = sort_params(bit_list, start, n, 2);   % sort a <= b
 end
 
 function bit_list = generate_pi_shaped(bit_list, n)
+    start = numel(bit_list) + 1;              % bit index where pi shaped begins (1-based)
     bit_list = add_param_bits(bit_list, n);   % a
     bit_list = add_param_bits(bit_list, n);   % b
     bit_list = add_param_bits(bit_list, n);   % c
     bit_list = add_param_bits(bit_list, n);   % d
+    bit_list = sort_params(bit_list, start, n, 4);   % sort a <= b <= c <= d
 end
 
 function bit_list = generate_product_of_sigmoids(bit_list, n)
+    start = numel(bit_list) + 1;              % bit index where product of sigmoids begins (1-based)
     bit_list = add_param_bits(bit_list, n);   % a1
     bit_list = add_param_bits(bit_list, n);   % c1
     bit_list = add_param_bits(bit_list, n);   % a2
     bit_list = add_param_bits(bit_list, n);   % c2
+    bit_list = sort_params(bit_list, start, n, 2, 2, 1);   % sort (a1 c1)(a2 c2) pairs so c1 <= c2
 end
 
 function bit_list = generate_s_shaped(bit_list, n)
+    start = numel(bit_list) + 1;              % bit index where s shaped begins (1-based)
     bit_list = add_param_bits(bit_list, n);   % a
     bit_list = add_param_bits(bit_list, n);   % b
+    bit_list = sort_params(bit_list, start, n, 2);   % sort a <= b
 end
 
 function bit_list = generate_sigmoid(bit_list, n)
@@ -166,7 +187,7 @@ function bit_list = generate_trapezoidal(bit_list, n)
     bit_list = add_param_bits(bit_list, n);   % b
     bit_list = add_param_bits(bit_list, n);   % c
     bit_list = add_param_bits(bit_list, n);   % d
-    bit_list = sort_params(bit_list, start, n, 4);   % enforce a <= b <= c <= d
+    bit_list = sort_params(bit_list, start, n, 4);   % sort a <= b <= c <= d
 end
 
 function bit_list = generate_triangular(bit_list, n)
@@ -174,23 +195,27 @@ function bit_list = generate_triangular(bit_list, n)
     bit_list = add_param_bits(bit_list, n);   % a
     bit_list = add_param_bits(bit_list, n);   % b
     bit_list = add_param_bits(bit_list, n);   % c
-    bit_list = sort_params(bit_list, start, n, 3);   % enforce a <= b <= c
+    bit_list = sort_params(bit_list, start, n, 3);   % sort a <= b <= c
 end
 
 function bit_list = generate_two_sided_gaussian(bit_list, n)
+    start = numel(bit_list) + 1;              % bit index where two sided gaussian begins (1-based)
     bit_list = add_param_bits(bit_list, n);   % sigma1
     bit_list = add_param_bits(bit_list, n);   % c1
     bit_list = add_param_bits(bit_list, n);   % sigma2
     bit_list = add_param_bits(bit_list, n);   % c2
+    bit_list = sort_params(bit_list, start, n, 2, 2, 1);   % sort (sigma1 c1)(sigma2 c2) pairs so c1 <= c2
 end
 
 function bit_list = generate_z_shaped(bit_list, n)
+    start = numel(bit_list) + 1;              % bit index where z shaped begins (1-based)
     bit_list = add_param_bits(bit_list, n);   % a
     bit_list = add_param_bits(bit_list, n);   % b
+    bit_list = sort_params(bit_list, start, n, 2);   % sort a <= b
 end
 
 function bit_list = generate_select_bits(bit_list)
     select_int  = randi([0 12]);
-    select_bits = dec2bin(select_int, 4) - '0';   % e.g. '0101' -> [0 1 0 1]
+    select_bits = dec2bin(select_int, 4) - '0';   % plain binary, e.g. '0101' -> [0 1 0 1]
     bit_list = [bit_list, select_bits];
 end
